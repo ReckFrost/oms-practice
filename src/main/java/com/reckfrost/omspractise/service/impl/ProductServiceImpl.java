@@ -3,10 +3,11 @@ package com.reckfrost.omspractise.service.impl;
 import com.reckfrost.omspractise.dto.ProductDto;
 import com.reckfrost.omspractise.dto.Status;
 import com.reckfrost.omspractise.entity.Product;
+import com.reckfrost.omspractise.exception.ResourceAlreadyExistsException;
+import com.reckfrost.omspractise.exception.ResourceNotFoundException;
 import com.reckfrost.omspractise.mapper.ProductMapper;
 import com.reckfrost.omspractise.repository.ProductRepository;
 import com.reckfrost.omspractise.service.ProductService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -18,6 +19,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private static final String RESOURCE_NAME = "Product";
 
     public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
@@ -26,6 +28,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto createProduct(ProductDto productDto) {
+        if(!ObjectUtils.isEmpty(productRepository.findByRef(productDto.getRef()))){
+            throw new ResourceAlreadyExistsException(RESOURCE_NAME, "ref", productDto.getRef());
+        }
+
         Product product = productMapper.mapDtoToEntity(productDto);
 
         Product savedProduct = productRepository.save(product);
@@ -47,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductById(Long id) {
-        Product queriedProduct  = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product Not found with id: " + id));
+        Product queriedProduct  = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
 
         return productMapper.mapEntityToDto(queriedProduct);
     }
@@ -56,19 +62,17 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProductByRef(String ref) {
         Product product = productRepository.findByRef(ref);
 
-        ProductDto productDto = null;
-        if(!ObjectUtils.isEmpty(product)){
-            productDto = productMapper.mapEntityToDto(product);
-        } else {
-            throw new EntityNotFoundException("Product Not found with ref:" + ref);
+        if(ObjectUtils.isEmpty(product)){
+            throw new ResourceNotFoundException(RESOURCE_NAME, "ref", ref);
         }
-        // Implement else part if product not exist
 
-        return productDto;
+        return productMapper.mapEntityToDto(product);
     }
 
     @Override
     public ProductDto updateProduct(ProductDto productDto) {
+        productRepository.findById(productDto.getId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", productDto.getId().toString()));
+
         Product product = productMapper.mapDtoToEntity(productDto);
 
         Product updatedProduct = productRepository.save(product);
@@ -83,6 +87,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto updateProductStatus(Long id, Status newStatus) {
+        productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
+
         productRepository.updateProductStatus(id, newStatus);
 
         Product updatedStatusProduct = productRepository.findById(id).orElseThrow();

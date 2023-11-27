@@ -5,12 +5,15 @@ import com.reckfrost.omspractise.dto.Status;
 import com.reckfrost.omspractise.entity.Inventory;
 import com.reckfrost.omspractise.entity.Location;
 import com.reckfrost.omspractise.entity.Product;
+import com.reckfrost.omspractise.exception.ResourceAlreadyExistsException;
+import com.reckfrost.omspractise.exception.ResourceNotFoundException;
 import com.reckfrost.omspractise.mapper.InventoryMapper;
 import com.reckfrost.omspractise.repository.InventoryRepository;
 import com.reckfrost.omspractise.repository.LocationRepository;
 import com.reckfrost.omspractise.repository.ProductRepository;
 import com.reckfrost.omspractise.service.InventoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ public class InventoryServiceImpl implements InventoryService {
     final InventoryMapper inventoryMapper;
     final ProductRepository productRepository;
     final LocationRepository locationRepository;
+    private static final String RESOURCE_NAME = "Inventory";
 
     public InventoryServiceImpl(InventoryRepository inventoryRepository, InventoryMapper inventoryMapper, ProductRepository productRepository, LocationRepository locationRepository) {
         this.inventoryRepository = inventoryRepository;
@@ -33,6 +37,10 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryDto createInventory(InventoryDto inventoryDto) {
         inventoryDto.setRef(inventoryDto.getProductRef() + ":" + inventoryDto.getLocationRef());
+
+        if(!ObjectUtils.isEmpty(inventoryRepository.getInventoryByRef(inventoryDto.getRef()))){
+            throw new ResourceAlreadyExistsException(RESOURCE_NAME, "ref", inventoryDto.getRef());
+        }
 
         Inventory inventory = inventoryMapper.mapDtoToEntity(inventoryDto);
 
@@ -60,7 +68,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDto getInventoryById(Long id) {
-        Inventory queriedInventory = inventoryRepository.findById(id).orElseThrow();
+        Inventory queriedInventory = inventoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
 
         InventoryDto inventoryDto = inventoryMapper.mapEntityToDto(queriedInventory);
         inventoryDto.setProductRef(queriedInventory.getProduct().getRef());
@@ -72,6 +80,10 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryDto getInventoryByRef(String ref) {
         Inventory inventory = inventoryRepository.getInventoryByRef(ref);
+
+        if(ObjectUtils.isEmpty(inventory)){
+            throw new ResourceNotFoundException(RESOURCE_NAME, "ref", ref);
+        }
 
         return inventoryMapper.mapEntityToDto(inventory);
     }
@@ -90,7 +102,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDto updateInventoryById(InventoryDto inventoryDto) {
-        Inventory inventoryToBeUpdated = inventoryRepository.findById(inventoryDto.getId()).orElseThrow();
+        Inventory inventoryToBeUpdated = inventoryRepository.findById(inventoryDto.getId()).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", inventoryDto.getId().toString()));
 
         inventoryToBeUpdated.setQuantity(inventoryDto.getQuantity());
         if (inventoryDto.getBuffer() != null) inventoryToBeUpdated.setBuffer(inventoryDto.getBuffer());
@@ -102,7 +114,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDto updateInventoryStatus(Long id, Status status) {
-        Inventory inventory = inventoryRepository.findById(id).orElseThrow();
+        Inventory inventory = inventoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
 
         if (!inventory.getStatus().equals(status)) {
             inventory.setStatus(status);
