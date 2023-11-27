@@ -11,5 +11,6 @@ public interface InventoryService {
     InventoryDto getInventoryById(Long id);
     InventoryDto getInventoryByRef(String ref);
     InventoryDto updateInventory(InventoryDto inventoryDto);
+    InventoryDto updateInventoryById(InventoryDto inventoryDto);
     InventoryDto updateInventoryStatus(Long id, Status status);
 }

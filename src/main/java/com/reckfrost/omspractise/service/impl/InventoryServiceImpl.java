@@ -49,7 +49,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<InventoryDto> getInventories() {
-
         List<Inventory> inventories = inventoryRepository.findAll();
 
         List<InventoryDto> inventoryDtos = new ArrayList<>();
@@ -61,7 +60,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public InventoryDto getInventoryById(Long id) {
-
         Inventory queriedInventory = inventoryRepository.findById(id).orElseThrow();
 
         InventoryDto inventoryDto = inventoryMapper.mapEntityToDto(queriedInventory);
@@ -78,13 +76,24 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryMapper.mapEntityToDto(inventory);
     }
 
-
     @Override
     public InventoryDto updateInventory(InventoryDto inventoryDto) {
+        Inventory inventoryToBeUpdated = inventoryRepository.getInventoryByRef(inventoryDto.getProductRef() + ":" + inventoryDto.getLocationRef());
+
+        inventoryToBeUpdated.setQuantity(inventoryDto.getQuantity());
+
+        Inventory updatedInventory = inventoryRepository.save(inventoryToBeUpdated);
+
+        return inventoryMapper.mapEntityToDto(updatedInventory);
+    }
+
+
+    @Override
+    public InventoryDto updateInventoryById(InventoryDto inventoryDto) {
         Inventory inventoryToBeUpdated = inventoryRepository.findById(inventoryDto.getId()).orElseThrow();
 
         inventoryToBeUpdated.setQuantity(inventoryDto.getQuantity());
-        if(inventoryDto.getBuffer() != null) inventoryToBeUpdated.setBuffer(inventoryDto.getBuffer());
+        if (inventoryDto.getBuffer() != null) inventoryToBeUpdated.setBuffer(inventoryDto.getBuffer());
 
         Inventory updatedInventory = inventoryRepository.save(inventoryToBeUpdated);
 
@@ -95,7 +104,7 @@ public class InventoryServiceImpl implements InventoryService {
     public InventoryDto updateInventoryStatus(Long id, Status status) {
         Inventory inventory = inventoryRepository.findById(id).orElseThrow();
 
-        if(!inventory.getStatus().equals(status)){
+        if (!inventory.getStatus().equals(status)) {
             inventory.setStatus(status);
             inventoryRepository.updateInventoryStatus(id, status);
         }

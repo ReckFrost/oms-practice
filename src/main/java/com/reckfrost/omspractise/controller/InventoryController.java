@@ -47,7 +47,7 @@ public class InventoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<InventoryDto> updateInventory(@PathVariable("id") Long id, @RequestBody InventoryDto inventoryDto){
+    public ResponseEntity<InventoryDto> updateInventoryById(@PathVariable("id") Long id, @RequestBody InventoryDto inventoryDto){
         inventoryDto.setId(id);
         InventoryDto savedInventory = inventoryService.updateInventory(inventoryDto);
 
@@ -59,6 +59,13 @@ public class InventoryController {
         InventoryDto savedInventory = inventoryService.updateInventoryStatus(id, inventoryDto.getStatus());
 
         return new ResponseEntity<>(savedInventory, HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<InventoryDto> updateInventory(@RequestBody InventoryDto inventoryDto){
+        InventoryDto updatedInventory = inventoryService.updateInventory(inventoryDto);
+
+        return new ResponseEntity<>(updatedInventory, HttpStatus.OK);
     }
 
 }

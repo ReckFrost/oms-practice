@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.reckfrost</groupId>
 	<artifactId>oms-practise</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>oms-practise</name>
 	<description>OMS Practise project for Spring Boot</description>
 	<properties>
@@ -51,6 +51,11 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>1.5.5.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.5</version> <!-- Use the latest version -->
 		</dependency>
 	</dependencies>
 
