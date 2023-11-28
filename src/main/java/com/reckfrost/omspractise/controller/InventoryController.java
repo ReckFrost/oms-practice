@@ -21,7 +21,7 @@ public class InventoryController {
     public ResponseEntity<List<InventoryDto>> getInventories(){
         List<InventoryDto> inventories = inventoryService.getInventories();
 
-        return new ResponseEntity<>(inventories, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(inventories);
     }
 
     @PostMapping
@@ -29,21 +29,21 @@ public class InventoryController {
 
         InventoryDto savedInventory = inventoryService.createInventory(inventoryDto);
 
-        return new ResponseEntity<>(savedInventory, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedInventory);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<InventoryDto> getInventoryById(@PathVariable("id") Long id){
         InventoryDto inventory = inventoryService.getInventoryById(id);
 
-        return new ResponseEntity<>(inventory, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(inventory);
     }
 
     @GetMapping("/ref/{ref}")
     public ResponseEntity<InventoryDto> getInventoryByRef(@PathVariable("ref") String ref){
         InventoryDto inventory = inventoryService.getInventoryByRef(ref);
 
-        return new ResponseEntity<>(inventory, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(inventory);
     }
 
     @PutMapping("{id}")
@@ -51,21 +51,21 @@ public class InventoryController {
         inventoryDto.setId(id);
         InventoryDto savedInventory = inventoryService.updateInventory(inventoryDto);
 
-        return new ResponseEntity<>(savedInventory, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedInventory);
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<InventoryDto> updateInventoryStatus(@PathVariable("id") Long id, @RequestBody InventoryDto inventoryDto){
         InventoryDto savedInventory = inventoryService.updateInventoryStatus(id, inventoryDto.getStatus());
 
-        return new ResponseEntity<>(savedInventory, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedInventory);
     }
 
     @PostMapping("/update")
     public ResponseEntity<InventoryDto> updateInventory(@RequestBody InventoryDto inventoryDto){
         InventoryDto updatedInventory = inventoryService.updateInventory(inventoryDto);
 
-        return new ResponseEntity<>(updatedInventory, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedInventory);
     }
 
 }

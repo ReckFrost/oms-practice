@@ -22,21 +22,21 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getProducts(){
         List<ProductDto> products = productService.getProducts();
 
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id){
         ProductDto product = productService.getProductById(id);
 
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/ref/{ref}")
     public ResponseEntity<ProductDto> getProductByRef(@PathVariable("ref") String ref){
         ProductDto product = productService.getProductByRef(ref);
 
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping
@@ -44,7 +44,7 @@ public class ProductController {
 
         ProductDto savedProduct = productService.createProduct(productDto);
 
-        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
     @PutMapping("{id}")
@@ -52,13 +52,13 @@ public class ProductController {
         productDto.setId(id);
         ProductDto savedProduct = productService.updateProduct(productDto);
 
-        return new ResponseEntity<>(savedProduct, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedProduct);
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<ProductDto> updateProductStatus(@PathVariable("id") Long id, @RequestBody ProductDto productDto){
         ProductDto savedProduct = productService.updateProductStatus(id, productDto.getStatus());
 
-        return new ResponseEntity<>(savedProduct, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedProduct);
     }
 }

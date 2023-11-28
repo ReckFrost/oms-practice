@@ -22,7 +22,7 @@ public class LocationController {
     public ResponseEntity<List<LocationDto>> getLocations(){
         List<LocationDto> locations = locationService.getLocations();
 
-        return new ResponseEntity<>(locations, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(locations);
     }
 
     @PostMapping
@@ -30,21 +30,21 @@ public class LocationController {
 
         LocationDto savedLocation = locationService.createLocation(locationDto);
 
-        return new ResponseEntity<>(savedLocation, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedLocation);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<LocationDto> getLocationById(@PathVariable("id") Long id){
         LocationDto location = locationService.getLocationById(id);
 
-        return new ResponseEntity<>(location, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(location);
     }
 
     @GetMapping("/ref/{ref}")
     public ResponseEntity<LocationDto> getLocationByRef(@PathVariable("ref") String ref){
         LocationDto location = locationService.getLocationByRef(ref);
 
-        return new ResponseEntity<>(location, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(location);
     }
 
     @PutMapping("{id}")
@@ -52,13 +52,13 @@ public class LocationController {
         locationDto.setId(id);
         LocationDto savedLocation = locationService.updateLocation(locationDto);
 
-        return new ResponseEntity<>(savedLocation, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedLocation);
     }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<LocationDto> updateLocationStatus(@PathVariable("id") Long id, @RequestBody LocationDto locationDto){
         LocationDto savedLocation = locationService.updateLocationStatus(id, locationDto.getStatus());
 
-        return new ResponseEntity<>(savedLocation, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(savedLocation);
     }
 }
