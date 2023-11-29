@@ -25,7 +25,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id){
         ProductDto product = productService.getProductById(id);
 
@@ -47,7 +47,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") Long id, @RequestBody ProductDto productDto){
         productDto.setId(id);
         ProductDto savedProduct = productService.updateProduct(productDto);

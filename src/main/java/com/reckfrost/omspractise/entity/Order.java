@@ -24,8 +24,11 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "customer")
     private Customer customer;
+    @Column(nullable = false)
     private Double price;
+    @Column(nullable = false)
     private Double tax;
+    @Column(nullable = false)
     private Double totalPrice;
     private Timestamp createdOn;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

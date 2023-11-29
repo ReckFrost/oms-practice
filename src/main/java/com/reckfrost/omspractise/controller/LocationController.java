@@ -33,7 +33,7 @@ public class LocationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLocation);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<LocationDto> getLocationById(@PathVariable("id") Long id){
         LocationDto location = locationService.getLocationById(id);
 
@@ -47,7 +47,7 @@ public class LocationController {
         return ResponseEntity.status(HttpStatus.OK).body(location);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<LocationDto> updateLocation(@PathVariable("id") Long id, @RequestBody LocationDto locationDto){
         locationDto.setId(id);
         LocationDto savedLocation = locationService.updateLocation(locationDto);

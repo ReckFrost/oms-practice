@@ -32,7 +32,7 @@ public class InventoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedInventory);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<InventoryDto> getInventoryById(@PathVariable("id") Long id){
         InventoryDto inventory = inventoryService.getInventoryById(id);
 
@@ -46,7 +46,7 @@ public class InventoryController {
         return ResponseEntity.status(HttpStatus.OK).body(inventory);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<InventoryDto> updateInventoryById(@PathVariable("id") Long id, @RequestBody InventoryDto inventoryDto){
         inventoryDto.setId(id);
         InventoryDto savedInventory = inventoryService.updateInventory(inventoryDto);

@@ -22,10 +22,15 @@ public class OrderItem {
     private String ref;
     @ManyToOne
     private Product product;
+    @Column(nullable = false)
     private Integer quantity;
+    @Column(nullable = false)
     private Double price;
+    @Column(nullable = false)
     private Double taxPrice;
+    @Column(nullable = false)
     private Double totalPrice;
+    @Column(nullable = false)
     private Double totalTaxPrice;
     private Timestamp createdOn;
     @ManyToOne

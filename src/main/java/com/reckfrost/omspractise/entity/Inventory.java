@@ -23,7 +23,7 @@ public class Inventory {
     private Product product;
     @ManyToOne
     private Location location;
-    @NonNull
+    @Column(nullable = false)
     private Integer quantity;
     private Integer buffer;
 }

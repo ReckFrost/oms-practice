@@ -22,6 +22,8 @@ public class ShipmentItem {
     private Shipment shipment;
     @ManyToOne
     private OrderItem orderItem;
+    @Column(nullable = false)
     private Integer requestedQuantity;
+    @Column(nullable = false)
     private Integer filledQuantity;
 }
