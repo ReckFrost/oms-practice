@@ -9,7 +9,6 @@ import com.reckfrost.omspractise.mapper.ProductMapper;
 import com.reckfrost.omspractise.repository.ProductRepository;
 import com.reckfrost.omspractise.service.ProductService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +27,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto createProduct(ProductDto productDto) {
-        if(!ObjectUtils.isEmpty(productRepository.findByRef(productDto.getRef()))){
-            throw new ResourceAlreadyExistsException(RESOURCE_NAME, "ref", productDto.getRef());
-        }
+        productRepository.findByRef(productDto.getRef())
+                .map(existingProduct -> {
+                    throw new ResourceAlreadyExistsException(RESOURCE_NAME, "ref", productDto.getRef());
+                });
 
         Product product = productMapper.mapDtoToEntity(productDto);
 
@@ -60,13 +60,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductByRef(String ref) {
-        Product product = productRepository.findByRef(ref);
-
-        if(ObjectUtils.isEmpty(product)){
-            throw new ResourceNotFoundException(RESOURCE_NAME, "ref", ref);
-        }
-
-        return productMapper.mapEntityToDto(product);
+        return productRepository.findByRef(ref).map(productMapper::mapEntityToDto)
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "ref", ref));
     }
 
     @Override
@@ -87,12 +82,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto updateProductStatus(Long id, Status newStatus) {
-        productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
-
-        productRepository.updateProductStatus(id, newStatus);
-
-        Product updatedStatusProduct = productRepository.findById(id).orElseThrow();
-
-        return  productMapper.mapEntityToDto(updatedStatusProduct);
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
+        if(!product.getStatus().equals(newStatus)) {
+            product.setStatus(newStatus);
+            product = productRepository.save(product);
+        }
+        return  productMapper.mapEntityToDto(product);
     }
 }

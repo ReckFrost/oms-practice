@@ -44,8 +44,8 @@ public class InventoryServiceImpl implements InventoryService {
 
         Inventory inventory = inventoryMapper.mapDtoToEntity(inventoryDto);
 
-        Product product = productRepository.findByRef(inventoryDto.getProductRef());
-        Location location = locationRepository.getLocationByRef(inventoryDto.getLocationRef());
+        Product product = productRepository.findByRef(inventoryDto.getProductRef()).get();
+        Location location = locationRepository.getLocationByRef(inventoryDto.getLocationRef()).get();
 
         inventory.setProduct(product);
         inventory.setLocation(location);

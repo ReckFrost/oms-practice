@@ -58,14 +58,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDto getLocationByRef(String ref) {
-
-        Location refQueriedLocation = locationRepository.getLocationByRef(ref);
-
-        if(ObjectUtils.isEmpty(refQueriedLocation)){
-            throw new ResourceNotFoundException(RESOURCE_NAME, "ref", ref);
-        }
-
-        return locationMapper.mapEntityToDto(refQueriedLocation);
+        return  locationRepository.getLocationByRef(ref).map(locationMapper::mapEntityToDto)
+                .orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "ref", ref));
     }
 
     @Override
@@ -86,13 +80,12 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDto updateLocationStatus(Long id, Status newStatus) {
-        locationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
-
-        locationRepository.updateLocationStatus(id, newStatus);
-
-        Location updatedStatusLocation = locationRepository.findById(id).orElseThrow();
-
-        return  locationMapper.mapEntityToDto(updatedStatusLocation);
+        Location location = locationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RESOURCE_NAME, "id", id.toString()));
+        if(location.getStatus().equals(newStatus)){
+            location.setStatus(newStatus);
+            location = locationRepository.save(location);
+        }
+        return  locationMapper.mapEntityToDto(location);
     }
 
 
