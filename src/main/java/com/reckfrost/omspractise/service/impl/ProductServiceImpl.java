@@ -8,6 +8,8 @@ import com.reckfrost.omspractise.exception.ResourceNotFoundException;
 import com.reckfrost.omspractise.mapper.ProductMapper;
 import com.reckfrost.omspractise.repository.ProductRepository;
 import com.reckfrost.omspractise.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,8 +42,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProducts() {
-        List<Product> products = productRepository.findAll();
+    public List<ProductDto> getProducts(Pageable pageable) {
+//        List<Product> products = productRepository.findAll();
+        Page<Product> products = productRepository.findAll(pageable);
 
         List<ProductDto> productDtoList = new ArrayList<>();
         products.forEach(product -> productDtoList.add(

@@ -8,6 +8,8 @@ import com.reckfrost.omspractise.exception.ResourceNotFoundException;
 import com.reckfrost.omspractise.mapper.LocationMapper;
 import com.reckfrost.omspractise.repository.LocationRepository;
 import com.reckfrost.omspractise.service.LocationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -40,8 +42,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<LocationDto> getLocations() {
-        List<Location> locations = locationRepository.findAll();
+    public List<LocationDto> getLocations(Pageable pageable) {
+        Page<Location> locations = locationRepository.findAll(pageable);
 
         List<LocationDto> locationDtoList = new ArrayList<>();
         locations.forEach(location -> locationDtoList.add(locationMapper.mapEntityToDto(location)));
