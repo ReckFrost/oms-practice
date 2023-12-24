@@ -18,6 +18,7 @@ public class Location {
     @Column(unique = true)
     private String ref;
     private String name;
+    @Column(length = 350)
     private String description;
     @Enumerated(EnumType.STRING)
     private Status status;
