@@ -2,14 +2,13 @@ package com.reckfrost.omspractise.controller;
 
 import com.reckfrost.omspractise.dto.ProductDto;
 import com.reckfrost.omspractise.service.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/omspractice/products")
@@ -22,11 +21,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getProducts(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<ProductDto>> getProducts(@RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size,
                                                         @RequestParam(defaultValue = "id") String sortBy){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-        List<ProductDto> products = productService.getProducts(pageable);
+        Page<ProductDto> products = productService.getProducts(pageable);
 
         return ResponseEntity.ok(products);
     }

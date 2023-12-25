@@ -9,6 +9,7 @@ import com.reckfrost.omspractise.mapper.ProductMapper;
 import com.reckfrost.omspractise.repository.ProductRepository;
 import com.reckfrost.omspractise.service.ProductService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +43,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProducts(Pageable pageable) {
-//        List<Product> products = productRepository.findAll();
+    public Page<ProductDto> getProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
 
         List<ProductDto> productDtoList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
                 productMapper.mapEntityToDto(product)
         ));
 
-        return productDtoList;
+        return new PageImpl<>(productDtoList, products.getPageable(), products.getTotalElements());
     }
 
     @Override
