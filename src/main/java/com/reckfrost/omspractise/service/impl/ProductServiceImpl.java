@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto createProduct(ProductDto productDto) {
         productRepository.findByRef(productDto.getRef())
-                .map(existingProduct -> {
+                .ifPresent(existingProduct -> {
                     throw new ResourceAlreadyExistsException(RESOURCE_NAME, "ref", productDto.getRef());
                 });
 
@@ -91,5 +91,15 @@ public class ProductServiceImpl implements ProductService {
             product = productRepository.save(product);
         }
         return  productMapper.mapEntityToDto(product);
+    }
+
+    @Override
+    public Page<ProductDto> searchProductByName(String name, Pageable pageable) {
+        Page<Product> searchedProducts = productRepository.findByNameContaining(name, pageable);
+
+        List<ProductDto> productDtoList = new ArrayList<>();
+        searchedProducts.map(product -> productDtoList.add(productMapper.mapEntityToDto(product)));
+
+        return new PageImpl<>(productDtoList, searchedProducts.getPageable(), searchedProducts.getTotalElements());
     }
 }

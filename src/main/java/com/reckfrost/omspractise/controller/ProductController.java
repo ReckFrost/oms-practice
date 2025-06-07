@@ -66,4 +66,13 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).body(savedProduct);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductDto>> searchProductByName(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "name") String name){
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<ProductDto> searchedProduct = productService.searchProductByName(name, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(searchedProduct);
+    }
 }
